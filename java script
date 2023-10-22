@@ -1,0 +1,55 @@
+let currentPlayer = "X";
+let gameOver = false;
+
+function makeMove(cell) {
+    if (cell.innerHTML === "" && !gameOver) {
+        cell.innerHTML = currentPlayer;
+        cell.classList.add("occupied");
+        if (checkWinner(currentPlayer)) {
+            document.getElementById("result").textContent = `Player ${currentPlayer} wins!`;
+            gameOver = true;
+        } else if (checkDraw()) {
+            document.getElementById("result").textContent = "It's a draw!";
+            gameOver = true;
+        } else {
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+        }
+    }
+}
+
+function checkWinner(player) {
+    const cells = document.querySelectorAll(".cell");
+    const winningCombos = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ];
+
+    for (const combo of winningCombos) {
+        const [a, b, c] = combo;
+        if (cells[a].innerHTML === player && cells[b].innerHTML === player && cells[c].innerHTML === player) {
+            cells[a].classList.add("winner");
+            cells[b].classList.add("winner");
+            cells[c].classList.add("winner");
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function checkDraw() {
+    const cells = document.querySelectorAll(".cell");
+    return Array.from(cells).every(cell => cell.innerHTML !== "");
+}
+
+function newGame() {
+    const cells = document.querySelectorAll(".cell");
+    cells.forEach(cell => {
+        cell.innerHTML = "";
+        cell.classList.remove("occupied", "winner");
+    });
+    document.getElementById("result").textContent = "";
+    currentPlayer = "X";
+    gameOver = false;
+}
